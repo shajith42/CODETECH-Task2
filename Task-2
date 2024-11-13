@@ -1,0 +1,90 @@
+1. Database Schema
+The mini-project uses three core tables: employees, departments, and roles.
+
+Table: departments
+Contains the basic details about each department.
+
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY AUTO_INCREMENT,
+    department_name VARCHAR(50) UNIQUE NOT NULL
+);
+Table: roles
+Contains different job roles and their associated salaries.
+
+CREATE TABLE roles (
+    role_id INT PRIMARY KEY AUTO_INCREMENT,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    salary DECIMAL(10, 2) NOT NULL
+);
+Table: employees
+Stores employee details, including their department and role.
+
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    department_id INT,
+    role_id INT,
+    hire_date DATE NOT NULL,
+    FOREIGN KEY (department_id) REFERENCES departments(department_id),
+    FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
+2. Insert Sample Data
+Populate each table with a few sample records.
+
+Insert data for departments:
+
+INSERT INTO departments (department_name) VALUES
+('HR'), ('Finance'), ('Engineering');
+Insert data for roles:
+
+INSERT INTO roles (role_name, salary) VALUES
+('Manager', 75000.00), ('Analyst', 60000.00), ('Developer', 80000.00);
+Insert data for employees:
+
+INSERT INTO employees (first_name, last_name, email, department_id, role_id, hire_date) VALUES
+('Alice', 'Brown', 'alice.brown@example.com', 1, 1, '2022-01-15'),
+('Bob', 'Smith', 'bob.smith@example.com', 2, 2, '2023-03-20'),
+('Charlie', 'Johnson', 'charlie.johnson@example.com', 3, 3, '2021-06-30');
+Basic Queries
+Here are some sample queries that you can use to manage and analyze the employee data.
+
+List all employees with their department and role:
+
+SELECT e.employee_id, e.first_name, e.last_name, d.department_name, r.role_name, r.salary
+FROM employees e
+JOIN departments d ON e.department_id = d.department_id
+JOIN roles r ON e.role_id = r.role_id;
+Find employees in a specific department (e.g., "Engineering"):
+
+SELECT e.first_name, e.last_name, r.role_name
+FROM employees e
+JOIN departments d ON e.department_id = d.department_id
+JOIN roles r ON e.role_id = r.role_id
+WHERE d.department_name = 'Engineering';
+Count employees in each department:
+
+SELECT d.department_name, COUNT(e.employee_id) AS total_employees
+FROM departments d
+LEFT JOIN employees e ON d.department_id = e.department_id
+GROUP BY d.department_name;
+Get employees with salaries above $65,000:
+
+SELECT e.first_name, e.last_name, r.salary
+FROM employees e
+JOIN roles r ON e.role_id = r.role_id
+WHERE r.salary > 65000;
+Update an employee's role:
+For example, to change Alice Brown's role to 'Analyst':
+
+
+UPDATE employees
+SET role_id = 2
+WHERE first_name = 'Alice' AND last_name = 'Brown';
+Delete an employee record:
+To delete employee with employee_id = 3:
+
+
+DELETE FROM employees
+WHERE employee_id = 3;
